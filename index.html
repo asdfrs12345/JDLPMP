@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashlakshan Paryushan Maha Parva 2025</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>📅 Dashlakshan Paryushan Maha Parva 2025</h1>
+    <p class="subtitle">દશલક્ષણ પર્યુષણ મહા પર્વ ૨૦૨૫</p>
+  </header>
+
+  <main>
+    <section class="schedule" id="schedule-container">
+      <p>Loading schedule...</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Designed for the JSOU | Jain Tithi Mapping by JSOU</p>
+  </footer>
+
+  <script>
+    const sheetURL = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec";
+
+    fetch(sheetURL)
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("schedule-container");
+        container.innerHTML = ""; // Clear loading message
+
+        data.forEach(day => {
+          const card = document.createElement("div");
+          card.className = "day-card";
+          card.innerHTML = `
+            <div class="date">${day.Date}</div>
+            <div class="tithi">${day.Tithi}</div>
+            <div class="virtue">${day.Virtue}</div>
+            <div class="events">
+              <ul>
+                ${day.Events.split(';').map(e => `<li>${e.trim()}</li>`).join('')}
+              </ul>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      })
+      .catch(error => {
+        document.getElementById("schedule-container").innerHTML = "<p>Error loading schedule.</p>";
+        console.error("Fetch error:", error);
+      });
+  </script>
+</body>
+</html>

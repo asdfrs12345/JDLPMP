@@ -1,0 +1,92 @@
+/* Base styles */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f9f7f4;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* Header */
+header {
+  background: #fff3e0;
+  padding: 1.5em;
+  text-align: center;
+  border-bottom: 2px solid #e0c097;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2em;
+  color: #a0522d;
+}
+
+.subtitle {
+  font-size: 1.2em;
+  color: #6d4c41;
+  margin-top: 0.5em;
+}
+
+/* Schedule container */
+.schedule {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 2em;
+  gap: 1.5em;
+}
+
+/* Day card */
+.day-card {
+  background: #ffffff;
+  border: 1px solid #d7ccc8;
+  border-radius: 8px;
+  padding: 1em;
+  width: 280px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.day-card:hover {
+  transform: scale(1.02);
+}
+
+/* Card content */
+.date {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #3e2723;
+}
+
+.tithi {
+  font-size: 1em;
+  color: #5d4037;
+  margin-top: 0.5em;
+}
+
+.virtue {
+  font-size: 1em;
+  font-weight: bold;
+  color: #8e24aa;
+  margin-top: 0.5em;
+}
+
+.events ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 0.5em;
+}
+
+.events li {
+  margin: 0.3em 0;
+  font-size: 0.95em;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 1em;
+  background: #efebe9;
+  font-size: 0.9em;
+  color: #6d4c41;
+}
