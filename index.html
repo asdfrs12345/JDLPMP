@@ -1,14 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>JSOU Dashlakshan Maha Parva 2025 Program Details</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .card {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .day-label {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 8px;
+      white-space: pre-line;
+    }
+    .block {
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+    .block strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
-  <h1>📅 JSOU Dashlakshan Maha Parva 2025 Program Details</h1>
+  <h1>JSOU Dashlakshan Maha Parva 2025 Program Details</h1>
   <div id="schedule"></div>
-  <script src="script.js"></script>
+
+  <script>
+    const endpoint = "https://script.googleusercontent.com/macros/exec?service=AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd";
+
+    fetch(endpoint)
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("schedule");
+        data.forEach(day => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          card.innerHTML = `
+            <div class="day-label">${day.dayLabel}</div>
+            <div class="block"><strong>Morning:</strong>${day.morningBlock}</div>
+            <div class="block"><strong>Evening:</strong>${day.eveningBlock}</div>
+          `;
+
+          container.appendChild(card);
+        });
+      })
+      .catch(error => {
+        document.getElementById("schedule").innerText = "Error loading schedule.";
+        console.error("Fetch error:", error);
+      });
+  </script>
 </body>
 </html>
