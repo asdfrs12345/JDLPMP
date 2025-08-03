@@ -2,6 +2,15 @@ body {
   font-family: sans-serif;
   background-color: #f0f4f8;
   padding: 20px;
+  margin: 0;
+}
+
+#page-title {
+  text-align: center;
+  font-size: 1.8em;
+  color: #003a8c;
+  margin-bottom: 24px;
+  font-weight: bold;
 }
 
 #schedule {
@@ -42,7 +51,12 @@ body {
   padding: 8px;
   border-radius: 4px;
 }
+
 @media (max-width: 600px) {
+  #page-title {
+    font-size: 1.4em;
+  }
+
   #schedule {
     flex-direction: column;
     align-items: center;
