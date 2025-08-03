@@ -2,30 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>JSOU Dashlakshan Maha Parva 2025 Program Details</title>
+  <title>JSOU Dashlakshan Paryushan Maha Parva 2025 Program Details</title>
   <style>
     body {
       font-family: sans-serif;
       background: #f9f9f9;
       padding: 20px;
-      max-width: 800px;
-      margin: auto;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
     }
     .card {
-      background: white;
       border: 1px solid #ccc;
-      border-radius: 8px;
       padding: 16px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background: white;
     }
     .day-label {
       font-weight: bold;
-      font-size: 1.2em;
       margin-bottom: 8px;
       white-space: pre-line;
     }
@@ -33,15 +24,10 @@
       margin-top: 10px;
       white-space: pre-line;
     }
-    .block strong {
-      display: block;
-      margin-bottom: 4px;
-      color: #333;
-    }
   </style>
 </head>
 <body>
-  <h1>JSOU Dashlakshan Maha Parva 2025 Program Details</h1>
+  <h1>JSOU Dashlakshan Paryushan Maha Parva 2025 Program Details</h1>
   <div id="schedule"></div>
 
   <script>
@@ -55,12 +41,21 @@
           const card = document.createElement("div");
           card.className = "card";
 
-          card.innerHTML = `
-            <div class="day-label">${day.dayLabel}</div>
-            <div class="block"><strong>Morning:</strong>${day.morningBlock}</div>
-            <div class="block"><strong>Evening:</strong>${day.eveningBlock}</div>
-          `;
+          const dayLabel = document.createElement("div");
+          dayLabel.className = "day-label";
+          dayLabel.textContent = day.dayLabel;
 
+          const morningBlock = document.createElement("div");
+          morningBlock.className = "block";
+          morningBlock.textContent = "Morning:\n" + day.morningBlock;
+
+          const eveningBlock = document.createElement("div");
+          eveningBlock.className = "block";
+          eveningBlock.textContent = "Evening:\n" + day.eveningBlock;
+
+          card.appendChild(dayLabel);
+          card.appendChild(morningBlock);
+          card.appendChild(eveningBlock);
           container.appendChild(card);
         });
       })
