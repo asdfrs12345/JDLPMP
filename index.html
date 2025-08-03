@@ -3,37 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashlakshan Paryushan Maha Parva 2025</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>JSOU Dashlakshan Maha Parva 2025 Program Details</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>📅 Dashlakshan Paryushan Maha Parva 2025</h1>
-    <p class="subtitle">દશલક્ષણ પર્યુષણ મહા પર્વ ૨૦૨૫</p>
-  </header>
-
-  <main>
-    <section class="schedule" id="schedule-container">
-      <p>Loading schedule...</p>
-    </section>
-  </main>
-
-  <footer>
-    <p>Designed for the Jain Community | Jain Tithi Mapping by R.</p>
-  </footer>
-
-  <script>
-    const sheetURL = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec";
-
-    fetch(sheetURL)
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById("schedule-container").innerHTML = html;
-      })
-      .catch(error => {
-        document.getElementById("schedule-container").innerHTML = "<p>Error loading schedule.</p>";
-        console.error("Fetch error:", error);
-      });
-  </script>
+  <h1>📅 JSOU Dashlakshan Maha Parva 2025 Program Details</h1>
+  <div id="schedule"></div>
+  <script src="script.js"></script>
 </body>
 </html>
