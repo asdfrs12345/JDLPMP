@@ -19,33 +19,16 @@
   </main>
 
   <footer>
-    <p>Designed for the JSOU | Jain Tithi Mapping by JSOU</p>
+    <p>Designed for the Jain Community | Jain Tithi Mapping by R.</p>
   </footer>
 
   <script>
     const sheetURL = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec";
 
     fetch(sheetURL)
-      .then(response => response.json())
-      .then(data => {
-        const container = document.getElementById("schedule-container");
-        container.innerHTML = ""; // Clear loading message
-
-        data.forEach(day => {
-          const card = document.createElement("div");
-          card.className = "day-card";
-          card.innerHTML = `
-            <div class="date">${day.Date}</div>
-            <div class="tithi">${day.Tithi}</div>
-            <div class="virtue">${day.Virtue}</div>
-            <div class="events">
-              <ul>
-                ${day.Events.split(';').map(e => `<li>${e.trim()}</li>`).join('')}
-              </ul>
-            </div>
-          `;
-          container.appendChild(card);
-        });
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById("schedule-container").innerHTML = html;
       })
       .catch(error => {
         document.getElementById("schedule-container").innerHTML = "<p>Error loading schedule.</p>";
