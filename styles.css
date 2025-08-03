@@ -1,69 +1,49 @@
-body {
-  font-family: sans-serif;
-  background-color: #f0f4f8;
-  padding: 20px;
-  margin: 0;
+.day-uttam-kshamaa {
+  border-color: #52c41a;
+  background: linear-gradient(135deg, #f6ffed, #ffffff);
 }
 
-#page-title {
-  text-align: center;
-  font-size: 1.8em;
-  color: #003a8c;
-  margin-bottom: 24px;
-  font-weight: bold;
+.day-uttam-mardav {
+  border-color: #fa8c16;
+  background: linear-gradient(135deg, #fff7e6, #ffffff);
 }
 
-#schedule {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: center;
+.day-uttam-arjav {
+  border-color: #1890ff;
+  background: linear-gradient(135deg, #e6f7ff, #ffffff);
 }
 
-.card {
-  background: linear-gradient(135deg, #fffbe6, #e6f7ff);
-  border: 2px solid #1890ff;
-  border-radius: 8px;
-  padding: 16px;
-  width: 300px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease;
+.day-uttam-satya {
+  border-color: #722ed1;
+  background: linear-gradient(135deg, #f9f0ff, #ffffff);
 }
 
-.card:hover {
-  transform: scale(1.02);
+.day-uttam-shauch {
+  border-color: #13c2c2;
+  background: linear-gradient(135deg, #e6fffb, #ffffff);
 }
 
-.day-label {
-  font-weight: bold;
-  font-size: 1.2em;
-  margin-bottom: 10px;
-  color: #0050b3;
-  text-align: center;
+.day-uttam-sanyam {
+  border-color: #eb2f96;
+  background: linear-gradient(135deg, #fff0f6, #ffffff);
 }
 
-.block {
-  margin-top: 8px;
-  white-space: pre-wrap;
-  color: #333;
-  background-color: #ffffff;
-  border: 1px dashed #ccc;
-  padding: 8px;
-  border-radius: 4px;
+.day-uttam-tapa {
+  border-color: #d4380d;
+  background: linear-gradient(135deg, #fff2e8, #ffffff);
 }
 
-@media (max-width: 600px) {
-  #page-title {
-    font-size: 1.4em;
-  }
+.day-uttam-tyag {
+  border-color: #a0d911;
+  background: linear-gradient(135deg, #f4ffde, #ffffff);
+}
 
-  #schedule {
-    flex-direction: column;
-    align-items: center;
-  }
+.day-uttam-akinchanya {
+  border-color: #531dab;
+  background: linear-gradient(135deg, #f0f5ff, #ffffff);
+}
 
-  .card {
-    width: 90%;
-    max-width: 350px;
-  }
+.day-uttam-brahmacharya {
+  border-color: #08979c;
+  background: linear-gradient(135deg, #e6fffb, #ffffff);
 }

@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JSOU Dashlakshan Paryuushan Maha Parva 2025 Program Details</title>
+  <title>JSOU Dashlakshan Paryushan Maha Parva 2025 Program Details</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1 id="page-title">JSOU Dashlakshan Paryuushan Maha Parva 2025 Program Details</h1>
+  <h1 id="page-title">JSOU Dashlakshan Paryushan Maha Parva 2025 Program Details</h1>
   <div id="schedule">Loading schedule...</div>
 
   <script>
@@ -28,6 +28,12 @@
           data.forEach(day => {
             const card = document.createElement("div");
             card.className = "card";
+
+            // 🔷 Add symbolic class based on Dashlakshan theme
+            const theme = day.dayLabel.match(/Uttam\s+\w+/i)?.[0]?.toLowerCase().replace(/\s+/g, "-");
+            if (theme) {
+              card.classList.add("day-" + theme);
+            }
 
             const dayLabel = document.createElement("div");
             dayLabel.className = "day-label";
