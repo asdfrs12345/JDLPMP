@@ -1,84 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashlakshan Schedule</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JSOU Dashlakshan Paryushan Maha Parva 2025 Program Details</title>
   <style>
-    /* Container to wrap all cards in a responsive grid */
+    /* Container for all cards */
     #schedule {
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
-      padding: 16px;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
-    /* Individual card styles */
+    /* Card look */
     .card {
       background: #fff;
+      border: 2px solid #1890ff;
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      flex: 1 1 calc(33% - 32px); /* three cards per row, with gaps */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      flex: 1 1 calc(33% - 32px); /* three cards per row */
       max-width: calc(33% - 32px);
       min-width: 240px;
-      display: flex;
-      flex-direction: column;
       padding: 16px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+      transition: transform .15s, box-shadow .15s;
     }
 
     .card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
 
+    /* Day label */
     .day-label {
-      font-size: 1.2rem;
-      font-weight: 600;
+      font-size: 1.2em;
+      font-weight: bold;
       margin-bottom: 12px;
-      color: #333;
+      text-align: center;
+      color: #0050b3;
     }
 
+    /* Morning/Evening blocks */
     .block {
       margin-bottom: 12px;
       line-height: 1.4;
-      color: #555;
+      color: #333;
+      white-space: pre-wrap;
     }
 
     .block strong {
       display: block;
-      margin-bottom: 4px;
-      color: #222;
+      margin-bottom: 6px;
+      color: #1890ff;
     }
 
-    /* Mobile adjustment */
+    /* Responsive breakpoints */
     @media (max-width: 800px) {
       .card {
         flex: 1 1 calc(50% - 32px);
         max-width: calc(50% - 32px);
       }
     }
-
     @media (max-width: 500px) {
       .card {
         flex: 1 1 100%;
         max-width: 100%;
       }
     }
+
+    /* Page title */
+    #page-title {
+      text-align: center;
+      margin: 24px 0;
+      font-size: 1.8em;
+      color: #003a8c;
+    }
   </style>
 </head>
 <body>
-  <h1>Dashlakshan Paryushan Schedule</h1>
+
+  <h1 id="page-title">JSOU Dashlakshan Paryushan Maha Parva 2025 Program Details</h1>
   <div id="schedule">Loading schedule…</div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const endpoint = "https://script.google.com/macros/s/…/exec";
+      const endpoint = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec";
 
       fetch(endpoint)
         .then(r => r.ok ? r.json() : Promise.reject("Network error"))
         .then(data => {
           const container = document.getElementById("schedule");
-          container.innerHTML = "";  // clear the loading text
+          container.innerHTML = ""; // clear loading text
 
           data.forEach(day => {
             const card = document.createElement("div");
@@ -87,30 +102,30 @@
             // Day label
             const dayLabel = document.createElement("div");
             dayLabel.className = "day-label";
-            dayLabel.innerHTML = day.dayLabel.replace(/\n/g, "<br>");
+            dayLabel.textContent = day.dayLabel || "—";
 
             // Morning block
             const morning = document.createElement("div");
             morning.className = "block";
-            morning.innerHTML = "<strong>Morning:</strong>" +
-                                day.morningBlock.replace(/\n/g, "<br>");
+            morning.innerHTML = "<strong>Morning:</strong><br>" +
+                                (day.morningBlock || "").replace(/\n/g, "<br>");
 
             // Evening block
             const evening = document.createElement("div");
             evening.className = "block";
-            evening.innerHTML = "<strong>Evening:</strong>" +
-                                day.eveningBlock.replace(/\n/g, "<br>");
+            evening.innerHTML = "<strong>Evening:</strong><br>" +
+                                (day.eveningBlock || "").replace(/\n/g, "<br>");
 
             card.append(dayLabel, morning, evening);
             container.appendChild(card);
           });
         })
         .catch(err => {
-          const container = document.getElementById("schedule");
-          container.innerText = "Error loading schedule.";
+          document.getElementById("schedule").innerText = "Error loading schedule.";
           console.error(err);
         });
     });
   </script>
+
 </body>
 </html>
