@@ -1,45 +1,56 @@
-const SHEET_URL = "YOUR_WEB_APP_URL_HERE"; // Replace with actual URL
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const endpoint = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec";
 
-fetch(SHEET_URL)
-  .then(response => response.json())
-  .then(data => {
-    const container = document.getElementById("schedule");
+    fetch(endpoint)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then(data => {
+        const container = document.getElementById("schedule");
+        container.innerHTML = "";
 
-    data.forEach(entry => {
-      const card = document.createElement("div");
-      card.className = "card " + getDharmaClass(entry.dayLabel);
+        data.forEach(day => {
+          const card = document.createElement("div");
+          card.className = "card";
 
-      const header = document.createElement("h2");
-      header.textContent = entry.dayLabel;
+          // 🔷 Add symbolic class based on Dashlakshan theme
+          const theme = day.dayLabel?.match(/Uttam\s+\w+/i)?.[0]?.toLowerCase().replace(/\s+/g, "-");
+          if (theme) {
+            card.classList.add("day-" + theme);
+          } else {
+            card.classList.add("day-default");
+          }
 
-      const morning = document.createElement("div");
-      morning.className = "section";
-      morning.innerHTML = `<strong>🌅 Morning:</strong><br>${entry.morningBlock}`;
+          // 🔷 Day label
+          const dayLabel = document.createElement("div");
+          dayLabel.className = "day-label";
+          dayLabel.textContent = day.dayLabel || "Untitled Day";
 
-      const evening = document.createElement("div");
-      evening.className = "section";
-      evening.innerHTML = `<strong🌙 Evening:</strong><br>${entry.eveningBlock}`;
+          // 🔷 Morning block
+          const morningBlock = document.createElement("div");
+          morningBlock.className = "block";
+          morningBlock.textContent = "Morning:\n" + (day.morningBlock || "Details not available");
 
-      card.appendChild(header);
-      card.appendChild(morning);
-      card.appendChild(evening);
-      container.appendChild(card);
-    });
+          // 🔷 Evening block
+          const eveningBlock = document.createElement("div");
+          eveningBlock.className = "block";
+          eveningBlock.textContent = "Evening:\n" + (day.eveningBlock || "Details not available");
+
+          // 🔷 Assemble card
+          card.appendChild(dayLabel);
+          card.appendChild(morningBlock);
+          card.appendChild(eveningBlock);
+          container.appendChild(card);
+        });
+      })
+      .catch(error => {
+        const container = document.getElementById("schedule");
+        container.innerText = "Error loading schedule.";
+        console.error("Fetch error:", error);
+      });
   });
-
-function getDharmaClass(label) {
-  const dharma = label.split("\n").pop().toLowerCase();
-  const map = {
-    "uttam kshamaa": "kshamaa",
-    "uttam maarjav": "maarjav",
-    "uttam arjav": "arjav",
-    "uttam shauch": "shauch",
-    "uttam satya": "satya",
-    "uttam sanyam": "sanyam",
-    "uttam tap": "tap",
-    "uttam tyaag": "tyaag",
-    "uttam akinchan": "akinchan",
-    "uttam brahmacharya": "brahmacharya"
-  };
-  return map[dharma] || "";
-}
+</script>
