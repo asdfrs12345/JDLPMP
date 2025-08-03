@@ -1,56 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JSOU Dashlakshan Paryushan Maha Parva 2025 Program Details</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>Dashlakshan Schedule</title>
+  <style>
+    /* Container to wrap all cards in a responsive grid */
+    #schedule {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    /* Individual card styles */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      flex: 1 1 calc(33% - 32px); /* three cards per row, with gaps */
+      max-width: calc(33% - 32px);
+      min-width: 240px;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .day-label {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #333;
+    }
+
+    .block {
+      margin-bottom: 12px;
+      line-height: 1.4;
+      color: #555;
+    }
+
+    .block strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #222;
+    }
+
+    /* Mobile adjustment */
+    @media (max-width: 800px) {
+      .card {
+        flex: 1 1 calc(50% - 32px);
+        max-width: calc(50% - 32px);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .card {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1 id="page-title">JSOU Dashlakshan Paryushan Maha Parva 2025 Program Details</h1>
-  <div id="schedule">Loading schedule...</div>
+  <h1>Dashlakshan Paryushan Schedule</h1>
+  <div id="schedule">Loading schedule…</div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const endpoint = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec";
+      const endpoint = "https://script.google.com/macros/s/…/exec";
 
       fetch(endpoint)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
+        .then(r => r.ok ? r.json() : Promise.reject("Network error"))
         .then(data => {
           const container = document.getElementById("schedule");
-          container.innerHTML = "";
+          container.innerHTML = "";  // clear the loading text
 
           data.forEach(day => {
             const card = document.createElement("div");
             card.className = "card";
 
+            // Day label
             const dayLabel = document.createElement("div");
             dayLabel.className = "day-label";
-            dayLabel.textContent = day.dayLabel;
+            dayLabel.innerHTML = day.dayLabel.replace(/\n/g, "<br>");
 
-            const morningBlock = document.createElement("div");
-            morningBlock.className = "block";
-            morningBlock.textContent = "Morning:\n" + day.morningBlock;
+            // Morning block
+            const morning = document.createElement("div");
+            morning.className = "block";
+            morning.innerHTML = "<strong>Morning:</strong>" +
+                                day.morningBlock.replace(/\n/g, "<br>");
 
-            const eveningBlock = document.createElement("div");
-            eveningBlock.className = "block";
-            eveningBlock.textContent = "Evening:\n" + day.eveningBlock;
+            // Evening block
+            const evening = document.createElement("div");
+            evening.className = "block";
+            evening.innerHTML = "<strong>Evening:</strong>" +
+                                day.eveningBlock.replace(/\n/g, "<br>");
 
-            card.appendChild(dayLabel);
-            card.appendChild(morningBlock);
-            card.appendChild(eveningBlock);
+            card.append(dayLabel, morning, evening);
             container.appendChild(card);
           });
         })
-        .catch(error => {
+        .catch(err => {
           const container = document.getElementById("schedule");
           container.innerText = "Error loading schedule.";
-          console.error("Fetch error:", error);
+          console.error(err);
         });
     });
   </script>
