@@ -1,158 +1,246 @@
-/*--------------------------------------------------------------
-  1. Reset & Base
---------------------------------------------------------------*/
+/* 1. Reset & Base */
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
 }
 
 body {
-  font-family: "Segoe UI", Roboto, sans-serif;
-  line-height: 1.5;
+  font-family: sans-serif;
+  background-color: #f2f4f7;    /* light page background so white cards pop */
   color: #333;
-  background: #f9f9f9;
-  padding: 1rem;
+  padding: 1.5rem;              /* breathing room around grid */
 }
 
-/*--------------------------------------------------------------
-  2. Table Wrapper for Horizontal Scroll
---------------------------------------------------------------*/
-#schedule-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+/* 2. Site Title */
+#site-title {
+  text-align: center;
   margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #2c3e50;
 }
 
-/*--------------------------------------------------------------
-  3. Schedule Table
---------------------------------------------------------------*/
-#schedule {
+/* 3. Loading State */
+#schedule.loading {
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+/* 4. Responsive Grid */
+#schedule:not(.loading) {
+  display: grid;
+  gap: 1rem;
+  padding: 0.5rem;              /* cards don’t touch screen edges */
+}
+
+@media (max-width: 599px) {
+  #schedule:not(.loading) {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  #schedule:not(.loading) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  #schedule:not(.loading) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 5. Card Wrapper */
+.day-card {
+  background-color: #ffffff;          /* pure white card */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  border: none;                       /* shadows suffice */
+  border-left: 8px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 6. Global Header Text Color Default */
+.card-header {
+  color: #ffffff;                    /* default header text white */
+}
+
+/* 7. Header Children Inherit Text Color */
+.card-header h2,
+.card-header .tithi,
+.card-header .date,
+.card-header .significance {
+  color: inherit;
+}
+
+/* 8. Exception for Very Light Cards (Days 3 & 10) */
+.day-3 .card-header,
+.day-10 .card-header {
+  color: #000000;                    /* switch text back to black */
+}
+
+/* 9. Card Header Common Styling */
+.card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.75rem;
+}
+
+.card-header > * {
   width: 100%;
-  min-width: 1200px;       /* ensure all 24 cols fit */
-  border-collapse: collapse;
-  table-layout: fixed;     /* equal-width cols by default */
+  margin: 0.25rem 0;
 }
 
-#schedule th,
-#schedule td {
-  border: 1px solid #ddd;
-  padding: 0.6rem 0.8rem;
-  vertical-align: top;
-  word-break: break-word;
+.card-header h2 {
+  font-size: 1.75rem;
 }
 
-#schedule th {
-  background: #f0f0f0;
-  font-weight: 600;
-  text-align: left;
-  position: sticky;
-  top: 0;
-  z-index: 2;
+.card-header .tithi {
+  font-size: 1.1rem;
 }
 
-/*--------------------------------------------------------------
-  4. Column Widths & Classes
-  (Adjust these widths to taste or leave min/max)
---------------------------------------------------------------*/
-.col-day-number { width: 4rem; }
-.col-tithi      { width: 12rem; }
-.col-day        { width: 8rem; }
-.col-date       { width: 8rem; }
-.col-significance { min-width: 14rem; }
-
-/* Pooja/Aarti columns */
-.col-pooja { min-width: 10rem; }
-
-/*--------------------------------------------------------------
-  5. Zebra Stripes & Row Hover
---------------------------------------------------------------*/
-#schedule tbody tr:nth-child(even) {
-  background: #fbfbfb;
+.card-header .date {
+  font-size: 0.95rem;
 }
 
-#schedule tbody tr:hover {
-  background: #e8f6f3;
+.card-header .significance {
+  font-size: 1.1rem;
 }
 
-/*--------------------------------------------------------------
-  6. Significance Theme Classes
-  (Apply to the <td class="col-significance day-uttam-…"> cell)
---------------------------------------------------------------*/
-.day-uttam-kshamaa {
-  border-left: 4px solid #52c41a;
-  background: linear-gradient(135deg, #f6ffed, #ffffff);
+/* 10. Card Body & Event Groups */
+.card-body {
+  padding: 0.75rem;
 }
 
-.day-uttam-mardav {
-  border-left: 4px solid #fa8c16;
-  background: linear-gradient(135deg, #fff7e6, #ffffff);
+.event-group + .event-group {
+  margin-top: 0.75rem;
 }
 
-.day-uttam-arjav {
-  border-left: 4px solid #1890ff;
-  background: linear-gradient(135deg, #e6f7ff, #ffffff);
+.event-group h3 {
+  font-size: 1.2rem;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
 }
 
-.day-uttam-satya {
-  border-left: 4px solid #722ed1;
-  background: linear-gradient(135deg, #f9f0ff, #ffffff);
+/* 11. Bullet Lists */
+.event-list {
+  list-style-type: disc;
+  list-style-position: outside;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
 }
 
-.day-uttam-shauch {
-  border-left: 4px solid #13c2c2;
-  background: linear-gradient(135deg, #e6fffb, #ffffff);
+.event-list li {
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
 }
 
-.day-uttam-sanyam {
-  border-left: 4px solid #eb2f96;
-  background: linear-gradient(135deg, #fff0f6, #ffffff);
+/* 12. Day-Specific Stripes & Header Backgrounds */
+.day-1 {
+  border-left-color: #4CAF50;
+}
+.day-1 .card-header {
+  background-color: #4CAF50;
 }
 
-.day-uttam-tapa {
-  border-left: 4px solid #d4380d;
-  background: linear-gradient(135deg, #fff2e8, #ffffff);
+.day-2 {
+  border-left-color: #2196F3;
+}
+.day-2 .card-header {
+  background-color: #2196F3;
 }
 
-.day-uttam-tyag {
-  border-left: 4px solid #a0d911;
-  background: linear-gradient(135deg, #f4ffde, #ffffff);
+.day-3 {
+  border-left-color: #FFEB3B;
+}
+.day-3 .card-header {
+  background-color: #FFEB3B;
 }
 
-.day-uttam-akinchanya {
-  border-left: 4px solid #531dab;
-  background: linear-gradient(135deg, #f0f5ff, #ffffff);
+.day-4 {
+  border-left-color: #FF9800;
+}
+.day-4 .card-header {
+  background-color: #FF9800;
 }
 
-.day-uttam-brahmacharya {
-  border-left: 4px solid #08979c;
-  background: linear-gradient(135deg, #e6fffb, #ffffff);
+.day-5 {
+  border-left-color: #9C27B0;
+}
+.day-5 .card-header {
+  background-color: #9C27B0;
 }
 
-/*--------------------------------------------------------------
-  7. Responsive Column Hiding
-  (Gradually hide less‐critical columns on smaller screens)
---------------------------------------------------------------*/
-@media (max-width: 900px) {
-  .col-pooja-4,
-  .col-pooja-3 {
-    display: none;
+.day-6 {
+  border-left-color: #F44336;
+}
+.day-6 .card-header {
+  background-color: #F44336;
+}
+
+.day-7 {
+  border-left-color: #212121;
+}
+.day-7 .card-header {
+  background-color: #212121;
+}
+
+.day-8 {
+  border-left-color: #795548;
+}
+.day-8 .card-header {
+  background-color: #795548;
+}
+
+.day-9 {
+  border-left-color: #7E57C2;
+}
+.day-9 .card-header {
+  background-color: #7E57C2;
+}
+
+/* Day 10: light gray instead of pure white so it shows up */
+.day-10 {
+  border-left-color: #e0e0e0;
+}
+.day-10 .card-header {
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+}
+
+/* ——— Print Styles ——— */
+@media print {
+  /* Make page white & remove extra padding */
+  body {
+    background: #fff !important;
+    padding: 0 !important;
   }
-}
 
-@media (max-width: 700px) {
-  .col-pooja-2 {
-    display: none;
+  /* One‐column layout for print */
+  #schedule {
+    display: block !important;
   }
-}
 
-@media (max-width: 500px) {
-  .col-pooja-1 {
-    display: none;
+  /* Simplify cards: no shadow, no stripe, avoid breaking inside */
+  .day-card {
+    box-shadow: none !important;
+    border-left: none !important;
+    border: 1px solid #000 !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Light gray header so labels stand out on white */
+  .card-header {
+    background: #e0e0e0 !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
