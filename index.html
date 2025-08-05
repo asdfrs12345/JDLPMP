@@ -2,195 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dashlakshan Paryushan 2025 Schedule</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>JSOU Dashlakshan Paryushan Maha Parva 2025 Program Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    /* Reset & body */
-    * { box-sizing: border-box; margin: 0; padding: 0 }
-    body {
-      font-family: sans-serif;
-      background: #f9f9f9;
-      color: #333;
-      padding: 1rem;
-    }
-
-    /* Page header */
-    h1#site-title {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      font-size: 2rem;
-      color: #2c3e50;
-    }
-
-    /* Loading state */
-    #schedule.loading {
-      text-align: center;
-      font-size: 1rem;
-      color: #555;
-      margin-bottom: 1.5rem;
-    }
-
-    /* Day card wrapper */
-    .day-card {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin-bottom: 1.5rem;
-      overflow: hidden;
-    }
-
-    /* Header inside card: always one‐per‐line */
-    .card-header {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: flex-start;
-      padding: 1rem;
-      background: #ecf0f1;
-    }
-    .card-header > * {
-      width: 100%;
-      margin: 0.25rem 0;
-    }
-    .card-header h2 {
-      font-size: 2rem;
-      color: #2c3e50;
-    }
-    .card-header .tithi {
-      font-size: 1.125rem;
-      color: #2980b9; /* deeper blue */
-    }
-    .card-header .date {
-      font-size: 1rem;
-      color: #555;
-    }
-    .card-header .significance {
-      font-size: 1.125rem;
-      color: #e74c3c;
-    }
-
-    /* Body inside card */
-    .card-body {
-      padding: 1rem;
-    }
-    .event-group + .event-group {
-      margin-top: 1rem;
-    }
-    .event-group h3 {
-      font-size: 1.25rem;
-      color: #34495e;
-      border-bottom: 2px solid #ecf0f1;
-      padding-bottom: 0.25rem;
-      margin-bottom: 0.5rem;
-    }
-
-    /* Bullets + bold items */
-    .event-list {
-      list-style-type: disc;
-      list-style-position: outside;
-      padding-left: 1.5rem;
-      margin-top: 0.5rem;
-    }
-    .event-list li {
-      margin-bottom: 0.75rem;
-      font-size: 1rem;
-    }
-    .event-list li .time {
-      display: inline-block;
-      width: 6rem;
-      font-weight: bold;
-      color: #2c3e50;
-    }
-    .event-list li strong {
-      font-weight: bold;
-    }
-  </style>
+  <!-- Link out to your external stylesheet -->
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-  <h1 id="site-title">Dashlakshan Paryushan 2025 Schedule</h1>
-  <div id="schedule" class="loading">Loading schedule…</div>
+  <h1 id="site-title">
+    JSOU Dashlakshan Paryushan Maha Parva 2025 Program Details
+  </h1>
 
-  <script>
-    window.renderSchedule = function(days) {
-      const container = document.getElementById("schedule");
-      container.classList.remove("loading");
+  <!-- Schedule container: script.js will populate this -->
+  <div id="schedule" class="loading">
+    Loading schedule…
+  </div>
 
-      container.innerHTML = days.map(day => {
-        const d = new Date(day.Date);
-        const dateStr = d.toLocaleDateString("en-US", {
-          weekday: "short", month: "short", day: "2-digit", year: "numeric"
-        });
-
-        // split Morning/Evening entries
-        const morning = [], evening = [];
-        Object.entries(day).forEach(([key, val]) => {
-          if (!val) return;
-          key.toLowerCase().startsWith("morning")
-            ? morning.push(...(Array.isArray(val) ? val : [val]))
-            : key.toLowerCase().startsWith("evening")
-            ? evening.push(...(Array.isArray(val) ? val : [val]))
-            : null;
-        });
-
-        // build list items
-        const buildList = items => items.map(item => {
-          const [time, ...rest] = item.split("–");
-          const desc = rest.join("–").trim();
-          return `
-            <li>
-              <span class="time">${time.trim()}</span>
-              <strong>${desc}</strong>
-            </li>`;
-        }).join("");
-
-        // helper for custom headings
-        const makeHeading = grp =>
-          grp === "Morning"
-            ? "Morning Pooja, Aarti"
-            : "Evening Aarti & Pravachan";
-
-        return `
-          <div class="day-card">
-            <div class="card-header">
-              <h2>Day ${day.DayNumber}</h2>
-              <p class="tithi">${day.Tithi || ""}</p>
-              <p class="date">${dateStr}</p>
-              <p class="significance">${day.Significance}</p>
-            </div>
-            <div class="card-body">
-              <div class="event-group">
-                <h3>${makeHeading("Morning")}</h3>
-                <ul class="event-list">${buildList(morning)}</ul>
-              </div>
-              <div class="event-group">
-                <h3>${makeHeading("Evening")}</h3>
-                <ul class="event-list">${buildList(evening)}</ul>
-              </div>
-            </div>
-          </div>`;
-      }).join("");
-    };
-
-    function handleJSONPError() {
-      const c = document.getElementById("schedule");
-      c.textContent = "Failed to load schedule. Check console/network.";
-      c.classList.remove("loading");
-      c.style.color = "#c0392b";
-    }
-
-    const script = document.createElement("script");
-    script.src     = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec?callback=renderSchedule";
-    script.async   = true;
-    script.onerror = handleJSONPError;
-    document.body.appendChild(script);
-
-    setTimeout(() => {
-      if (document.getElementById("schedule").classList.contains("loading")) {
-        handleJSONPError();
-      }
-    }, 10000);
-  </script>
+  <!-- Load your updated logic last, so HTML/CSS is parsed first -->
+  <script src="script.js"></script>
 </body>
 </html>
