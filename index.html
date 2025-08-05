@@ -6,37 +6,42 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
   <style>
+    /* Reset & body */
     * { box-sizing: border-box; margin: 0; padding: 0 }
     body {
       font-family: sans-serif;
       background: #f9f9f9;
+      color: #333;
       padding: 1rem;
     }
+
+    /* Page header */
     h1#site-title {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       font-size: 2rem;
       color: #2c3e50;
     }
+
+    /* Loading state */
     #schedule.loading {
       text-align: center;
       font-size: 1rem;
       color: #555;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
+    /* Day card wrapper */
     .day-card {
-      max-width: 600px;
-      width: 100%;
-      margin: 0 auto 2rem;
       background: #fff;
-      border: 1px solid #ddd;              /* add border */
+      border: 1px solid #ddd;
       border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
     }
 
+    /* Header inside card */
     .card-header {
       background: #ecf0f1;
       padding: 1rem;
@@ -45,10 +50,15 @@
       font-size: 2rem;
       color: #2c3e50;
     }
+    .card-header .tithi {
+      font-size: 1.125rem;
+      color: #8e44ad;
+      margin-top: 0.25rem;
+    }
     .card-header .date {
       font-size: 1rem;
       color: #555;
-      margin-top: 0.25rem;
+      margin-top: 0.5rem;
     }
     .card-header .significance {
       font-size: 1.125rem;
@@ -56,20 +66,11 @@
       margin-top: 0.5rem;
     }
 
+    /* Body inside card */
     .card-body {
-      display: grid;
-      grid-template-columns: 2fr 1fr;      /* two columns: events | tithi */
-      gap: 1.5rem;
       padding: 1rem;
-      line-height: 1.6;
     }
-
-    /* EVENTS COLUMN */
-    .events {
-      display: flex;
-      flex-direction: column;
-    }
-    .event-group:not(:first-child) {
+    .event-group + .event-group {
       margin-top: 1rem;
     }
     .event-group h3 {
@@ -79,46 +80,24 @@
       padding-bottom: 0.25rem;
       margin-bottom: 0.5rem;
     }
+
+    /* Restore bullets and bold descriptions */
     .event-list {
-      list-style: none;
+      list-style-type: disc;
+      margin-left: 1.25rem;
     }
     .event-list li {
-      display: grid;
-      grid-template-columns: auto 1fr;    /* no wrapping in time label */
-      column-gap: 0.5rem;
       margin-bottom: 0.75rem;
       font-size: 1rem;
     }
-    .event-list .time {
-      white-space: nowrap;
+    .event-list li .time {
+      display: inline-block;
+      width: 6rem;
       font-weight: bold;
       color: #2c3e50;
     }
-
-    /* TITHI COLUMN */
-    .tithi-group {
-      background: #fafafa;
-      padding: 1rem;
-      border: 1px dashed #eee;
-      border-radius: 4px;
-    }
-    .tithi-group h3 {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-      color: #8e44ad;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 0.25rem;
-    }
-    .tithi-group p {
-      font-size: 1rem;
-      color: #555;
-      white-space: pre-wrap;              /* preserve Gujarati line breaks */
-    }
-
-    @media (max-width: 700px) {
-      .card-body {
-        grid-template-columns: 1fr;       /* stack on small screens */
-      }
+    .event-list li strong {
+      font-weight: bold;
     }
   </style>
 </head>
@@ -134,61 +113,55 @@
       container.classList.remove("loading");
 
       container.innerHTML = days.map(day => {
-        // Format date
+        // Format date to "Sat, Sep 06, 2025"
         const d = new Date(day.Date);
         const dateStr = d.toLocaleDateString("en-US", {
-          weekday: "long",
+          weekday: "short",
           month:   "short",
           day:     "2-digit",
           year:    "numeric"
         });
 
-        // Collect morning/evening items
+        // Collect morning/evening entries
         const morning = [], evening = [];
         Object.entries(day).forEach(([key, val]) => {
           if (!val) return;
-          const target = key.toLowerCase().startsWith("morning") ? morning
-                       : key.toLowerCase().startsWith("evening") ? evening
-                       : null;
-          if (target) {
-            target.push(...(Array.isArray(val) ? val : [val]));
-          }
+          const list = key.toLowerCase().startsWith("morning")
+                     ? morning
+                     : key.toLowerCase().startsWith("evening")
+                     ? evening
+                     : null;
+          if (list) list.push(...(Array.isArray(val) ? val : [val]));
         });
 
-        // Build list items (split on “–”)
-        const buildList = items => items.map(item => {
-          const [time, ...rest] = item.split("–");
-          return `
-            <li>
-              <span class="time">${time.trim()}</span>
-              ${rest.join("–").trim()}
-            </li>`;
-        }).join("");
-
-        // Tithi text (may include Gujarati)
-        const tithi = day.Tithi || "—";
+        // Build <li> items, splitting on “–”
+        const buildList = items =>
+          items.map(item => {
+            const [time, ...rest] = item.split("–");
+            const desc = rest.join("–").trim();
+            return `
+              <li>
+                <span class="time">${time.trim()}</span>
+                <strong>${desc}</strong>
+              </li>`;
+          }).join("");
 
         return `
           <div class="day-card">
             <div class="card-header">
               <h2>Day ${day.DayNumber}</h2>
+              <p class="tithi">${day.Tithi || ""}</p>
               <p class="date">${dateStr}</p>
               <p class="significance">${day.Significance}</p>
             </div>
             <div class="card-body">
-              <div class="events">
-                <div class="event-group">
-                  <h3>Morning</h3>
-                  <ul class="event-list">${buildList(morning)}</ul>
-                </div>
-                <div class="event-group">
-                  <h3>Evening</h3>
-                  <ul class="event-list">${buildList(evening)}</ul>
-                </div>
+              <div class="event-group">
+                <h3>Morning</h3>
+                <ul class="event-list">${buildList(morning)}</ul>
               </div>
-              <div class="tithi-group">
-                <h3>Tithi</h3>
-                <p>${tithi}</p>
+              <div class="event-group">
+                <h3>Evening</h3>
+                <ul class="event-list">${buildList(evening)}</ul>
               </div>
             </div>
           </div>`;
@@ -200,16 +173,16 @@
       c.textContent = "Failed to load schedule. Check console/network.";
       c.classList.remove("loading");
       c.style.color = "#c0392b";
-      console.error("JSONP load error");
     }
 
-    // Inject your full Apps-Script URL here!
-    const jsonpScript = document.createElement("script");
-    jsonpScript.src    = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec?callback=renderSchedule";
-    jsonpScript.async  = true;
-    jsonpScript.onerror= handleJSONPError;
-    document.body.appendChild(jsonpScript);
+    // Inject your full Apps Script Web App URL here:
+    const script = document.createElement("script");
+    script.src     = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec?callback=renderSchedule";
+    script.async   = true;
+    script.onerror = handleJSONPError;
+    document.body.appendChild(script);
 
+    // Fallback timeout
     setTimeout(() => {
       if (document.getElementById("schedule").classList.contains("loading")) {
         handleJSONPError();
