@@ -2,102 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Schedule Viewer</title>
+  <title>Dashlakshan Paryushan 2025 Schedule</title>
+
+  <!-- 1. Ensure proper mobile scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    /* Container holds all cards in a responsive grid */
-    #schedule {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
+    /* Reset and body */
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    body {
+      font-family: sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      line-height: 1.4;
       padding: 1rem;
     }
 
-    /* Each day is a “card” */
+    /* Page header */
+    h1 {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #2c3e50;
+    }
+
+    /* Grid container: each card min 200px */
+    #schedule {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    /* Single-column under 400px */
+    @media (max-width: 400px) {
+      #schedule { grid-template-columns: 1fr }
+    }
+
+    /* Card styling */
     .card {
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       padding: 1rem;
-      font-family: sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    /* Header: Day number, date, significance */
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Day header with inline significance */
     .card h2 {
-      margin: 0 0 0.5rem;
-      font-size: 1.25rem;
-      line-height: 1.3;
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+      color: #34495e;
     }
 
     .card h2 strong {
-      font-weight: bold;
       margin-left: 0.5rem;
-      color: #333;
+      font-weight: bold;
+      color: #e74c3c;
     }
 
-    /* Section titles inside card */
+    /* Section titles */
     .section-title {
-      margin: 0.75rem 0 0.25rem;
+      margin: 0.5rem 0 0.25rem;
       font-size: 1rem;
       text-decoration: underline;
+      color: #555;
     }
 
-    /* Lists for activities */
+    /* Restore bullets */
     .card ul {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
+      list-style-type: disc;
+      margin: 0.25rem 0 0.75rem 1.25rem;
     }
 
     .card li {
       margin: 0.25rem 0;
       font-size: 0.95rem;
     }
+
+    /* Loading / error states */
+    #schedule.loading {
+      font-style: italic;
+      text-align: center;
+      color: #888;
+    }
   </style>
 </head>
 <body>
-  <div id="schedule"></div>
+
+  <h1>Dashlakshan Paryushan 2025 Schedule</h1>
+  <div id="schedule" class="loading">Loading schedule…</div>
 
   <script>
-    // 1) Global callback for JSONP
     function renderSchedule(data) {
       const container = document.getElementById('schedule');
-
-      const html = data.map(day => {
-        // 2) Format ISO date to "MMM DD, YYYY"
+      container.classList.remove('loading');
+      container.innerHTML = data.map(day => {
         const d = new Date(day.Date);
-        const fmtDate = d.toLocaleDateString('en-US', {
+        const fmt = d.toLocaleDateString('en-US', {
           month: 'short', day: 'numeric', year: 'numeric'
         });
 
-        // 3) Build morning list
-        const morningItems = day.MorningPoojaAarti
+        const morning = day.MorningPoojaAarti
+          .map(item => `<li>${item}</li>`).join('');
+        const evening = day.EveningAartiPravachan
           .map(item => `<li>${item}</li>`).join('');
 
-        // 4) Build evening list
-        const eveningItems = day.EveningAartiPravachan
-          .map(item => `<li>${item}</li>`).join('');
-
-        // 5) Return single card markup
         return `
           <div class="card">
             <h2>
-              Day ${day.DayNumber} – ${fmtDate}
+              Day ${day.DayNumber} – ${fmt}
               <strong>${day.Significance}</strong>
             </h2>
-
             <div class="section-title">Morning Pooja & Aarti</div>
-            <ul>${morningItems}</ul>
-
+            <ul>${morning}</ul>
             <div class="section-title">Evening Aarti & Pravachan</div>
-            <ul>${eveningItems}</ul>
+            <ul>${evening}</ul>
           </div>`;
       }).join('');
-
-      container.innerHTML = html;
     }
+
+    // Fallback if JSONP never calls back
+    setTimeout(() => {
+      const c = document.getElementById('schedule');
+      if (c.classList.contains('loading')) {
+        c.textContent = 'Failed to load schedule. Please try again.';
+        c.classList.remove('loading');
+        c.style.color = '#c0392b';
+      }
+    }, 8000);
   </script>
 
-  <!-- 6) JSONP fetch -->
+  <!-- JSONP injection -->
   <script src="https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec?callback=renderSchedule"></script>
 </body>
 </html>
