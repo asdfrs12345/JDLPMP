@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
   <style>
-    /* --- Global & Layout --- */
     * { box-sizing: border-box; margin: 0; padding: 0 }
     body {
       font-family: sans-serif;
@@ -26,16 +25,18 @@
       margin-bottom: 2rem;
     }
 
-    /* --- Day Card --- */
     .day-card {
-      max-width: 500px;
+      max-width: 600px;
       width: 100%;
       margin: 0 auto 2rem;
       background: #fff;
+      border: 1px solid #ddd;              /* add border */
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
+
     .card-header {
       background: #ecf0f1;
       padding: 1rem;
@@ -54,11 +55,21 @@
       color: #e74c3c;
       margin-top: 0.5rem;
     }
+
     .card-body {
+      display: grid;
+      grid-template-columns: 2fr 1fr;      /* two columns: events | tithi */
+      gap: 1.5rem;
       padding: 1rem;
       line-height: 1.6;
     }
-    .event-group {
+
+    /* EVENTS COLUMN */
+    .events {
+      display: flex;
+      flex-direction: column;
+    }
+    .event-group:not(:first-child) {
       margin-top: 1rem;
     }
     .event-group h3 {
@@ -72,14 +83,42 @@
       list-style: none;
     }
     .event-list li {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr;    /* no wrapping in time label */
+      column-gap: 0.5rem;
       margin-bottom: 0.75rem;
       font-size: 1rem;
     }
     .event-list .time {
-      width: 6rem;
+      white-space: nowrap;
       font-weight: bold;
       color: #2c3e50;
+    }
+
+    /* TITHI COLUMN */
+    .tithi-group {
+      background: #fafafa;
+      padding: 1rem;
+      border: 1px dashed #eee;
+      border-radius: 4px;
+    }
+    .tithi-group h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #8e44ad;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.25rem;
+    }
+    .tithi-group p {
+      font-size: 1rem;
+      color: #555;
+      white-space: pre-wrap;              /* preserve Gujarati line breaks */
+    }
+
+    @media (max-width: 700px) {
+      .card-body {
+        grid-template-columns: 1fr;       /* stack on small screens */
+      }
     }
   </style>
 </head>
@@ -89,31 +128,34 @@
   <div id="schedule" class="loading">Loading schedule…</div>
 
   <script>
-    // JSONP callback: renders every non-empty morning/evening field
     window.renderSchedule = function(days) {
       console.log("JSONP payload:", days);
       const container = document.getElementById("schedule");
       container.classList.remove("loading");
+
       container.innerHTML = days.map(day => {
         // Format date
         const d = new Date(day.Date);
         const dateStr = d.toLocaleDateString("en-US", {
-          weekday: "long", month: "short", day: "2-digit", year: "numeric"
+          weekday: "long",
+          month:   "short",
+          day:     "2-digit",
+          year:    "numeric"
         });
 
-        // Collect all morning/evening entries
+        // Collect morning/evening items
         const morning = [], evening = [];
         Object.entries(day).forEach(([key, val]) => {
           if (!val) return;
-          if (key.toLowerCase().startsWith("morning")) {
-            morning.push(...(Array.isArray(val) ? val : [val]));
-          }
-          if (key.toLowerCase().startsWith("evening")) {
-            evening.push(...(Array.isArray(val) ? val : [val]));
+          const target = key.toLowerCase().startsWith("morning") ? morning
+                       : key.toLowerCase().startsWith("evening") ? evening
+                       : null;
+          if (target) {
+            target.push(...(Array.isArray(val) ? val : [val]));
           }
         });
 
-        // Build list items, splitting on “–” for time vs description
+        // Build list items (split on “–”)
         const buildList = items => items.map(item => {
           const [time, ...rest] = item.split("–");
           return `
@@ -123,6 +165,9 @@
             </li>`;
         }).join("");
 
+        // Tithi text (may include Gujarati)
+        const tithi = day.Tithi || "—";
+
         return `
           <div class="day-card">
             <div class="card-header">
@@ -131,36 +176,40 @@
               <p class="significance">${day.Significance}</p>
             </div>
             <div class="card-body">
-              <div class="event-group">
-                <h3>Morning</h3>
-                <ul class="event-list">${buildList(morning)}</ul>
+              <div class="events">
+                <div class="event-group">
+                  <h3>Morning</h3>
+                  <ul class="event-list">${buildList(morning)}</ul>
+                </div>
+                <div class="event-group">
+                  <h3>Evening</h3>
+                  <ul class="event-list">${buildList(evening)}</ul>
+                </div>
               </div>
-              <div class="event-group">
-                <h3>Evening</h3>
-                <ul class="event-list">${buildList(evening)}</ul>
+              <div class="tithi-group">
+                <h3>Tithi</h3>
+                <p>${tithi}</p>
               </div>
             </div>
           </div>`;
       }).join("");
     };
 
-    // Error handler & timeout
     function handleJSONPError() {
       const c = document.getElementById("schedule");
       c.textContent = "Failed to load schedule. Check console/network.";
       c.classList.remove("loading");
       c.style.color = "#c0392b";
-      console.error("JSONP script failed");
+      console.error("JSONP load error");
     }
 
-    // Inject JSONP script
+    // Inject your full Apps-Script URL here!
     const jsonpScript = document.createElement("script");
-    jsonpScript.src = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec?callback=renderSchedule";
-    jsonpScript.async = true;
-    jsonpScript.onerror = handleJSONPError;
+    jsonpScript.src    = "https://script.google.com/macros/s/YOUR_FULL_ID/exec?callback=renderSchedule";
+    jsonpScript.async  = true;
+    jsonpScript.onerror= handleJSONPError;
     document.body.appendChild(jsonpScript);
 
-    // Timeout fallback
     setTimeout(() => {
       if (document.getElementById("schedule").classList.contains("loading")) {
         handleJSONPError();
