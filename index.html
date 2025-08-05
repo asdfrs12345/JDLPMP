@@ -1,52 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Dashlakshan Paryushan Schedule</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <title>Schedule Viewer</title>
+  <style>
+    /* Container holds all cards in a responsive grid */
+    #schedule {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    /* Each day is a “card” */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 1rem;
+      font-family: sans-serif;
+    }
+
+    /* Header: Day number, date, significance */
+    .card h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.25rem;
+      line-height: 1.3;
+    }
+
+    .card h2 strong {
+      font-weight: bold;
+      margin-left: 0.5rem;
+      color: #333;
+    }
+
+    /* Section titles inside card */
+    .section-title {
+      margin: 0.75rem 0 0.25rem;
+      font-size: 1rem;
+      text-decoration: underline;
+    }
+
+    /* Lists for activities */
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .card li {
+      margin: 0.25rem 0;
+      font-size: 0.95rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>Dashlakshan Paryushan Maha Parva 2025</h1>
   <div id="schedule"></div>
 
   <script>
-    // 1. JSONP callback
+    // 1) Global callback for JSONP
     function renderSchedule(data) {
       const container = document.getElementById('schedule');
-      container.innerHTML = ""; // clear any prior content
 
-      data.forEach(day => {
-        const card = document.createElement('div');
-        card.className = 'day-card';
+      const html = data.map(day => {
+        // 2) Format ISO date to "MMM DD, YYYY"
+        const d = new Date(day.Date);
+        const fmtDate = d.toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric', year: 'numeric'
+        });
 
-        // Metadata
-        const header = `
-          <h2>Day ${day.DayNumber} – ${day.Tithi} (${day.Date})</h2>
-          <p><em>${day.Significance}</em></p>
-        `;
+        // 3) Build morning list
+        const morningItems = day.MorningPoojaAarti
+          .map(item => `<li>${item}</li>`).join('');
 
-        // Morning list
-        const morningList = day.MorningPoojaAarti.length
-          ? `<ul>${day.MorningPoojaAarti.map(i=>`<li>${i}</li>`).join('')}</ul>`
-          : `<p>No morning events</p>`;
+        // 4) Build evening list
+        const eveningItems = day.EveningAartiPravachan
+          .map(item => `<li>${item}</li>`).join('');
 
-        // Evening list
-        const eveningList = day.EveningAartiPravachan.length
-          ? `<ul>${day.EveningAartiPravachan.map(i=>`<li>${i}</li>`).join('')}</ul>`
-          : `<p>No evening events</p>`;
+        // 5) Return single card markup
+        return `
+          <div class="card">
+            <h2>
+              Day ${day.DayNumber} – ${fmtDate}
+              <strong>${day.Significance}</strong>
+            </h2>
 
-        card.innerHTML = header +
-                         `<h3>Morning</h3>` + morningList +
-                         `<h3>Evening</h3>` + eveningList;
+            <div class="section-title">Morning Pooja & Aarti</div>
+            <ul>${morningItems}</ul>
 
-        container.appendChild(card);
-      });
+            <div class="section-title">Evening Aarti & Pravachan</div>
+            <ul>${eveningItems}</ul>
+          </div>`;
+      }).join('');
+
+      container.innerHTML = html;
     }
   </script>
 
-  <!-- 2. Load data via JSONP -->
-  <script
-    src="https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec?callback=renderSchedule">
-  </script>
+  <!-- 6) JSONP fetch -->
+  <script src="https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec?callback=renderSchedule"></script>
 </body>
 </html>
