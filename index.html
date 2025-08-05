@@ -4,99 +4,168 @@
   <meta charset="UTF-8">
   <title>Dashlakshan Paryushan 2025 Schedule</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+
   <style>
+    /* --- Global & Layout --- */
+    * { box-sizing: border-box; margin: 0; padding: 0 }
     body {
-      margin: 0; padding: 2rem;
       font-family: sans-serif;
       background: #f9f9f9;
-      display: flex; flex-wrap: wrap; gap: 2rem;
-      justify-content: center;
+      padding: 1rem;
     }
+    h1#site-title {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      color: #2c3e50;
+    }
+    #schedule.loading {
+      text-align: center;
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+
+    /* --- Day Card --- */
     .day-card {
-      max-width: 400px; width: 100%;
+      max-width: 500px;
+      width: 100%;
+      margin: 0 auto 2rem;
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      padding: 1.5rem;
+      overflow: hidden;
     }
-    .card-header h2 { font-size: 2.25rem; margin: 0; color: #2c3e50 }
-    .card-header .date { font-size: 1rem; color: #555; margin: .25rem 0 }
-    .card-header .significance { font-size: 1.125rem; color: #e74c3c }
-
-    .event-group { margin-top: 1.25rem }
+    .card-header {
+      background: #ecf0f1;
+      padding: 1rem;
+    }
+    .card-header h2 {
+      font-size: 2rem;
+      color: #2c3e50;
+    }
+    .card-header .date {
+      font-size: 1rem;
+      color: #555;
+      margin-top: 0.25rem;
+    }
+    .card-header .significance {
+      font-size: 1.125rem;
+      color: #e74c3c;
+      margin-top: 0.5rem;
+    }
+    .card-body {
+      padding: 1rem;
+      line-height: 1.6;
+    }
+    .event-group {
+      margin-top: 1rem;
+    }
     .event-group h3 {
-      font-size: 1.25rem; margin-bottom: .5rem;
-      border-bottom: 2px solid #ecf0f1; padding-bottom: .25rem;
+      font-size: 1.25rem;
       color: #34495e;
+      border-bottom: 2px solid #ecf0f1;
+      padding-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
     }
-    .event-list { list-style: none; padding: 0; margin: 0 }
+    .event-list {
+      list-style: none;
+    }
     .event-list li {
-      display: flex; margin-bottom: .75rem; font-size: 1rem;
+      display: flex;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
     }
     .event-list .time {
-      width: 6rem; font-weight: bold; color: #2c3e50;
+      width: 6rem;
+      font-weight: bold;
+      color: #2c3e50;
     }
   </style>
 </head>
+
 <body>
+  <h1 id="site-title">Dashlakshan Paryushan 2025 Schedule</h1>
+  <div id="schedule" class="loading">Loading schedule…</div>
+
   <script>
-    function renderSchedule(days) {
-      const html = days.map(day => {
-        // 1) Date formatting
+    // JSONP callback: renders every non-empty morning/evening field
+    window.renderSchedule = function(days) {
+      console.log("JSONP payload:", days);
+      const container = document.getElementById("schedule");
+      container.classList.remove("loading");
+      container.innerHTML = days.map(day => {
+        // Format date
         const d = new Date(day.Date);
-        const fmt = d.toLocaleDateString('en-US',{
-          weekday:'long', month:'short', day:'2-digit', year:'numeric'
+        const dateStr = d.toLocaleDateString("en-US", {
+          weekday: "long", month: "short", day: "2-digit", year: "numeric"
         });
 
-        // 2) Gather *all* morning/evening fields
-        const morningItems = [];
-        const eveningItems = [];
+        // Collect all morning/evening entries
+        const morning = [], evening = [];
         Object.entries(day).forEach(([key, val]) => {
           if (!val) return;
-          if (key.toLowerCase().startsWith('morning')) {
-            Array.isArray(val) ? morningItems.push(...val) : morningItems.push(val);
+          if (key.toLowerCase().startsWith("morning")) {
+            morning.push(...(Array.isArray(val) ? val : [val]));
           }
-          if (key.toLowerCase().startsWith('evening')) {
-            Array.isArray(val) ? eveningItems.push(...val) : eveningItems.push(val);
+          if (key.toLowerCase().startsWith("evening")) {
+            evening.push(...(Array.isArray(val) ? val : [val]));
           }
         });
 
-        // 3) Build <li> lists
-        const listHTML = items => items.map(item => {
-          // if your item strings already include “time–label”, split:
-          const [time, ...desc] = item.split('–');
-          return `<li><span class="time">${time.trim()}</span>${desc.join('–').trim()}</li>`;
-        }).join('');
+        // Build list items, splitting on “–” for time vs description
+        const buildList = items => items.map(item => {
+          const [time, ...rest] = item.split("–");
+          return `
+            <li>
+              <span class="time">${time.trim()}</span>
+              ${rest.join("–").trim()}
+            </li>`;
+        }).join("");
 
         return `
           <div class="day-card">
             <div class="card-header">
               <h2>Day ${day.DayNumber}</h2>
-              <p class="date">${fmt}</p>
+              <p class="date">${dateStr}</p>
               <p class="significance">${day.Significance}</p>
             </div>
             <div class="card-body">
               <div class="event-group">
                 <h3>Morning</h3>
-                <ul class="event-list">${listHTML(morningItems)}</ul>
+                <ul class="event-list">${buildList(morning)}</ul>
               </div>
               <div class="event-group">
                 <h3>Evening</h3>
-                <ul class="event-list">${listHTML(eveningItems)}</ul>
+                <ul class="event-list">${buildList(evening)}</ul>
               </div>
             </div>
           </div>`;
-      }).join('');
+      }).join("");
+    };
 
-      document.body.innerHTML = html;
+    // Error handler & timeout
+    function handleJSONPError() {
+      const c = document.getElementById("schedule");
+      c.textContent = "Failed to load schedule. Check console/network.";
+      c.classList.remove("loading");
+      c.style.color = "#c0392b";
+      console.error("JSONP script failed");
     }
 
-    // JSONP callback
-    function callback(data) {
-      renderSchedule(data);
-    }
+    // Inject JSONP script
+    const jsonpScript = document.createElement("script");
+    jsonpScript.src = "https://script.google.com/macros/s/AKfycbxdmJGYT5EKZ9cAPxBzrdz2bV1eQmoL2_JHF21HmVTRlhHbvDtKmZOi8NOORyRRCYgd/exec?callback=renderSchedule";
+    jsonpScript.async = true;
+    jsonpScript.onerror = handleJSONPError;
+    document.body.appendChild(jsonpScript);
+
+    // Timeout fallback
+    setTimeout(() => {
+      if (document.getElementById("schedule").classList.contains("loading")) {
+        handleJSONPError();
+      }
+    }, 10000);
   </script>
-
-  <script src="https://script.google.com/macros/s/AKfycb…/exec?callback=callback"></script>
 </body>
 </html>
