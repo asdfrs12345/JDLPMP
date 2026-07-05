@@ -1,2 +1,2 @@
 # JDLPMP
-JSOU Daslakshan Paryushan Maha Parva 2025
+JSOU Daslakshan Paryushan Maha Parva 202'6
